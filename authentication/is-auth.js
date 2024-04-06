@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const STATUS = require("../utils/statusCodes");
 const MESSAGE = require("../utils/messages");
 
-const JWT_SECRET = process.env.CMS_OWNER_JWT_SECRET;
+const JWT_SECRET = process.env.CLT_JWT_SECRET;
 
 module.exports = async (req, res, next) => {
   const token = req.get("Authorization");

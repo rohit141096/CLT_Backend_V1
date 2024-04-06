@@ -4,7 +4,7 @@ const MESSAGE = require("../../../utils/messages");
 const Counter = require("../../../models/common/Counter");
 const { validationResult } = require("express-validator");
 
-const JWT_SECRET = process.env.CMS_OWNER_JWT_SECRET;
+const JWT_SECRET = process.env.CLT_JWT_SECRET;
 
 module.exports.updateCounter = async (req, res) => {
   const errors = validationResult(req);

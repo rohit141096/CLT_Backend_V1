@@ -24,9 +24,9 @@ const {
   sendOneTimeValidationSMS,
 } = require("../../utils/functions");
 
-const JWT_SECRET = process.env.CMS_OWNER_JWT_SECRET;
-const TOKEN_VALIDITY = process.env.CMS_OWNER_TOKEN_VALIDITY;
-const TOKEN_MAX_VALIDITY = process.env.CMS_OWNER_TOKEN_MAX_VALIDITY;
+const JWT_SECRET = process.env.CLT_JWT_SECRET;
+const TOKEN_VALIDITY = process.env.CLT_TOKEN_VALIDITY;
+const TOKEN_MAX_VALIDITY = process.env.CLT_TOKEN_MAX_VALIDITY;
 
 module.exports.registerUserWithoutToken = async (req, res) => {
   const errors = validationResult(req);
@@ -1509,219 +1509,240 @@ module.exports.checkUser2FAOTPValidity = async (req, res) => {
                       : "",
               };
 
-              let saveUserInUAMasterReq = await saveNewUserDetailsInUaMaster(
-                user_to_save,
-                response_data.access_token
-              );
+              // let saveUserInUAMasterReq = await saveNewUserDetailsInUaMaster(
+              //   user_to_save,
+              //   response_data.access_token
+              // );
 
-              if (saveUserInUAMasterReq.status === true) {
-                const activity_to_save = {
-                  activity_by: "OWNER",
-                  user: savedUser.id,
-                  activity_owner: "",
-                  ip_address: ip_address,
-                  country_code: country_code,
-                  country_name: country_name,
-                  city: city,
-                  state: state,
-                  latitude: latitude,
-                  longitude: longitude,
-                  pincode: pincode,
-                };
+              // if (saveUserInUAMasterReq.status === true) {
+              //   const activity_to_save = {
+              //     activity_by: "OWNER",
+              //     user: savedUser.id,
+              //     activity_owner: "",
+              //     ip_address: ip_address,
+              //     country_code: country_code,
+              //     country_name: country_name,
+              //     city: city,
+              //     state: state,
+              //     latitude: latitude,
+              //     longitude: longitude,
+              //     pincode: pincode,
+              //   };
 
-                let saveLoggedInActivityReq = await saveUserLoggedInActivity(
-                  activity_to_save,
-                  response_data.access_token
-                );
+              //   let saveLoggedInActivityReq = await saveUserLoggedInActivity(
+              //     activity_to_save,
+              //     response_data.access_token
+              //   );
 
-                if (saveLoggedInActivityReq.status === true) {
-                  const user_to_save_in_media_master = {
-                    user_id: savedUser.id,
-                    first_name: savedUser.first_name,
-                    last_name: savedUser.last_name,
-                    user_type: "OWNER",
-                    content_owner: "",
-                    role: savedUser.role,
-                    email_id: savedUser.email_data.email_id,
-                    phone_number: savedUser.phone_data.phone_number,
-                    avatar:
-                      savedUser.profile_pic.pic_type === "MEDIA"
-                        ? savedUser.profile_pic.media
-                        : savedUser.profile_pic.pic_type === "AVATAR"
-                          ? savedUser.profile_pic.avatar
-                          : "",
-                  };
+              //   if (saveLoggedInActivityReq.status === true) {
+              //     const user_to_save_in_media_master = {
+              //       user_id: savedUser.id,
+              //       first_name: savedUser.first_name,
+              //       last_name: savedUser.last_name,
+              //       user_type: "OWNER",
+              //       content_owner: "",
+              //       role: savedUser.role,
+              //       email_id: savedUser.email_data.email_id,
+              //       phone_number: savedUser.phone_data.phone_number,
+              //       avatar:
+              //         savedUser.profile_pic.pic_type === "MEDIA"
+              //           ? savedUser.profile_pic.media
+              //           : savedUser.profile_pic.pic_type === "AVATAR"
+              //             ? savedUser.profile_pic.avatar
+              //             : "",
+              //     };
 
-                  let saveUserInMediaMasterReq =
-                    await saveNewUserDetailsInMediaMaster(
-                      user_to_save_in_media_master,
-                      response_data.access_token
-                    );
+              //     let saveUserInMediaMasterReq =
+              //       await saveNewUserDetailsInMediaMaster(
+              //         user_to_save_in_media_master,
+              //         response_data.access_token
+              //       );
 
-                  if (saveUserInMediaMasterReq.status === true) {
-                    let recent_login_attempts = [...user.recent_login_attempts];
+              //     if (saveUserInMediaMasterReq.status === true) {
+              //       let recent_login_attempts = [...user.recent_login_attempts];
 
-                    recent_login_attempts.push({
-                      attempted_on: new Date(),
-                      attempt_result: "SUCCESS",
-                      attempt_stage: "VALIDATE_2FA",
-                      remarks: "User successfully logged in by validating 2fa.",
-                      metadata: {
-                        ip_address: ip_address,
-                        country_code: country_code,
-                        country_name: country_name,
-                        state: state,
-                        city: city,
-                        pincode: pincode,
-                        latitude: latitude,
-                        longitude: longitude,
-                      },
-                    });
+              //       recent_login_attempts.push({
+              //         attempted_on: new Date(),
+              //         attempt_result: "SUCCESS",
+              //         attempt_stage: "VALIDATE_2FA",
+              //         remarks: "User successfully logged in by validating 2fa.",
+              //         metadata: {
+              //           ip_address: ip_address,
+              //           country_code: country_code,
+              //           country_name: country_name,
+              //           state: state,
+              //           city: city,
+              //           pincode: pincode,
+              //           latitude: latitude,
+              //           longitude: longitude,
+              //         },
+              //       });
 
-                    user.recent_login_attempts = recent_login_attempts;
+              //       user.recent_login_attempts = recent_login_attempts;
 
-                    try {
-                      const savedUser = await user.save();
-                      if (savedUser) {
-                        return res.status(STATUS.SUCCESS).json({
-                          message: "Login Successfull",
-                          data: response_data,
-                        });
-                      } else {
-                        return res.status(STATUS.BAD_REQUEST).json({
-                          message: MESSAGE.internalServerError,
-                        });
-                      }
-                    } catch (error) {
-                      return res.status(STATUS.BAD_REQUEST).json({
-                        message: MESSAGE.internalServerError,
-                        error,
-                      });
-                    }
-                  } else {
-                    console.log("Unable to save user in activity");
+              //       try {
+              //         const savedUser = await user.save();
+              //         if (savedUser) {
+              //           return res.status(STATUS.SUCCESS).json({
+              //             message: "Login Successfull",
+              //             data: response_data,
+              //           });
+              //         } else {
+              //           return res.status(STATUS.BAD_REQUEST).json({
+              //             message: MESSAGE.internalServerError,
+              //           });
+              //         }
+              //       } catch (error) {
+              //         return res.status(STATUS.BAD_REQUEST).json({
+              //           message: MESSAGE.internalServerError,
+              //           error,
+              //         });
+              //       }
+              //     } else {
+              //       console.log("Unable to save user in activity");
 
-                    let recent_login_attempts = [...user.recent_login_attempts];
+              //       let recent_login_attempts = [...user.recent_login_attempts];
 
-                    recent_login_attempts.push({
-                      attempted_on: new Date(),
-                      attempt_result: "FAILED",
-                      attempt_stage: "VALIDATE_2FA",
-                      remarks:
-                        "2fa validation successfull. Failed to save user in media master.",
-                      metadata: {
-                        ip_address: ip_address,
-                        country_code: country_code,
-                        country_name: country_name,
-                        state: state,
-                        city: city,
-                        pincode: pincode,
-                        latitude: latitude,
-                        longitude: longitude,
-                      },
-                    });
+              //       recent_login_attempts.push({
+              //         attempted_on: new Date(),
+              //         attempt_result: "FAILED",
+              //         attempt_stage: "VALIDATE_2FA",
+              //         remarks:
+              //           "2fa validation successfull. Failed to save user in media master.",
+              //         metadata: {
+              //           ip_address: ip_address,
+              //           country_code: country_code,
+              //           country_name: country_name,
+              //           state: state,
+              //           city: city,
+              //           pincode: pincode,
+              //           latitude: latitude,
+              //           longitude: longitude,
+              //         },
+              //       });
 
-                    user.recent_login_attempts = recent_login_attempts;
+              //       user.recent_login_attempts = recent_login_attempts;
 
-                    try {
-                      const savedUser = await user.save();
-                      if (savedUser) {
-                        return res.status(STATUS.BAD_REQUEST).json({
-                          message: "Unable to save user in activity",
-                        });
-                      } else {
-                        return res.status(STATUS.BAD_REQUEST).json({
-                          message: MESSAGE.internalServerError,
-                        });
-                      }
-                    } catch (error) {
-                      return res.status(STATUS.BAD_REQUEST).json({
-                        message: MESSAGE.internalServerError,
-                        error,
-                      });
-                    }
-                  }
-                } else {
-                  let recent_login_attempts = [...user.recent_login_attempts];
+              //       try {
+              //         const savedUser = await user.save();
+              //         if (savedUser) {
+              //           return res.status(STATUS.BAD_REQUEST).json({
+              //             message: "Unable to save user in activity",
+              //           });
+              //         } else {
+              //           return res.status(STATUS.BAD_REQUEST).json({
+              //             message: MESSAGE.internalServerError,
+              //           });
+              //         }
+              //       } catch (error) {
+              //         return res.status(STATUS.BAD_REQUEST).json({
+              //           message: MESSAGE.internalServerError,
+              //           error,
+              //         });
+              //       }
+              //     }
+              //   } else {
+              //     let recent_login_attempts = [...user.recent_login_attempts];
 
-                  recent_login_attempts.push({
-                    attempted_on: new Date(),
-                    attempt_result: "FAILED",
-                    attempt_stage: "VALIDATE_2FA",
-                    remarks:
-                      "2fa validation successfull. Failed to save activity in user activity.",
-                    metadata: {
-                      ip_address: ip_address,
-                      country_code: country_code,
-                      country_name: country_name,
-                      state: state,
-                      city: city,
-                      pincode: pincode,
-                      latitude: latitude,
-                      longitude: longitude,
-                    },
+              //     recent_login_attempts.push({
+              //       attempted_on: new Date(),
+              //       attempt_result: "FAILED",
+              //       attempt_stage: "VALIDATE_2FA",
+              //       remarks:
+              //         "2fa validation successfull. Failed to save activity in user activity.",
+              //       metadata: {
+              //         ip_address: ip_address,
+              //         country_code: country_code,
+              //         country_name: country_name,
+              //         state: state,
+              //         city: city,
+              //         pincode: pincode,
+              //         latitude: latitude,
+              //         longitude: longitude,
+              //       },
+              //     });
+
+              //     user.recent_login_attempts = recent_login_attempts;
+
+              //     try {
+              //       const savedUser = await user.save();
+              //       if (savedUser) {
+              //         return res.status(STATUS.BAD_REQUEST).json({
+              //           message: "Unable to save activity",
+              //         });
+              //       } else {
+              //         return res.status(STATUS.BAD_REQUEST).json({
+              //           message: MESSAGE.internalServerError,
+              //         });
+              //       }
+              //     } catch (error) {
+              //       return res.status(STATUS.BAD_REQUEST).json({
+              //         message: MESSAGE.internalServerError,
+              //         error,
+              //       });
+              //     }
+              //   }
+              // }
+
+              // else {
+              //   let recent_login_attempts = [...user.recent_login_attempts];
+
+              //   recent_login_attempts.push({
+              //     attempted_on: new Date(),
+              //     attempt_result: "FAILED",
+              //     attempt_stage: "VALIDATE_2FA",
+              //     remarks:
+              //       "2fa validation successfull. Failed to save user in user activity.",
+              //     metadata: {
+              //       ip_address: ip_address,
+              //       country_code: country_code,
+              //       country_name: country_name,
+              //       state: state,
+              //       city: city,
+              //       pincode: pincode,
+              //       latitude: latitude,
+              //       longitude: longitude,
+              //     },
+              //   });
+
+              //   user.recent_login_attempts = recent_login_attempts;
+
+              //   try {
+              //     const savedUser = await user.save();
+              //     if (savedUser) {
+              //       return res.status(STATUS.BAD_REQUEST).json({
+              //         message: "Unable to save user in activity",
+              //       });
+              //     } else {
+              //       return res.status(STATUS.BAD_REQUEST).json({
+              //         message: MESSAGE.internalServerError,
+              //       });
+              //     }
+              //   } catch (error) {
+              //     return res.status(STATUS.BAD_REQUEST).json({
+              //       message: MESSAGE.internalServerError,
+              //       error,
+              //     });
+              //   }
+              // }
+
+              try {
+                const savedUser = await user.save();
+                if (savedUser) {
+                  return res.status(STATUS.SUCCESS).json({
+                    message: "Login Successfull",
+                    data: response_data,
                   });
-
-                  user.recent_login_attempts = recent_login_attempts;
-
-                  try {
-                    const savedUser = await user.save();
-                    if (savedUser) {
-                      return res.status(STATUS.BAD_REQUEST).json({
-                        message: "Unable to save activity",
-                      });
-                    } else {
-                      return res.status(STATUS.BAD_REQUEST).json({
-                        message: MESSAGE.internalServerError,
-                      });
-                    }
-                  } catch (error) {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: MESSAGE.internalServerError,
-                      error,
-                    });
-                  }
-                }
-              } else {
-                let recent_login_attempts = [...user.recent_login_attempts];
-
-                recent_login_attempts.push({
-                  attempted_on: new Date(),
-                  attempt_result: "FAILED",
-                  attempt_stage: "VALIDATE_2FA",
-                  remarks:
-                    "2fa validation successfull. Failed to save user in user activity.",
-                  metadata: {
-                    ip_address: ip_address,
-                    country_code: country_code,
-                    country_name: country_name,
-                    state: state,
-                    city: city,
-                    pincode: pincode,
-                    latitude: latitude,
-                    longitude: longitude,
-                  },
-                });
-
-                user.recent_login_attempts = recent_login_attempts;
-
-                try {
-                  const savedUser = await user.save();
-                  if (savedUser) {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: "Unable to save user in activity",
-                    });
-                  } else {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: MESSAGE.internalServerError,
-                    });
-                  }
-                } catch (error) {
+                } else {
                   return res.status(STATUS.BAD_REQUEST).json({
                     message: MESSAGE.internalServerError,
-                    error,
                   });
                 }
+              } catch (error) {
+                return res.status(STATUS.BAD_REQUEST).json({
+                  message: MESSAGE.internalServerError,
+                  error,
+                });
               }
             } else {
               let recent_login_attempts = [...user.recent_login_attempts];
@@ -1867,217 +1888,238 @@ module.exports.checkUser2FAOTPValidity = async (req, res) => {
                   : "",
           };
 
-          let saveUserInUAMasterReq = await saveNewUserDetailsInUaMaster(
-            user_to_save,
-            response_data.access_token
-          );
+          // let saveUserInUAMasterReq = await saveNewUserDetailsInUaMaster(
+          //   user_to_save,
+          //   response_data.access_token
+          // );
 
-          if (saveUserInUAMasterReq.status === true) {
-            const activity_to_save = {
-              activity_by: "OWNER",
-              user: user.id,
-              activity_owner: "",
-              ip_address: req.body.ip_address,
-              country_code: req.body.country_code,
-              country_name: req.body.country_name,
-              city: req.body.city,
-              state: req.body.state,
-              latitude: req.body.latitude,
-              longitude: req.body.longitude,
-              pincode: req.body.pincode,
-            };
+          // if (saveUserInUAMasterReq.status === true) {
+          //   const activity_to_save = {
+          //     activity_by: "OWNER",
+          //     user: user.id,
+          //     activity_owner: "",
+          //     ip_address: req.body.ip_address,
+          //     country_code: req.body.country_code,
+          //     country_name: req.body.country_name,
+          //     city: req.body.city,
+          //     state: req.body.state,
+          //     latitude: req.body.latitude,
+          //     longitude: req.body.longitude,
+          //     pincode: req.body.pincode,
+          //   };
 
-            let saveLoggedInActivityReq = await saveUserLoggedInActivity(
-              activity_to_save,
-              response_data.access_token
-            );
+          //   let saveLoggedInActivityReq = await saveUserLoggedInActivity(
+          //     activity_to_save,
+          //     response_data.access_token
+          //   );
 
-            if (saveLoggedInActivityReq.status === true) {
-              const user_to_save_in_media_master = {
-                user_id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                user_type: "OWNER",
-                content_owner: "",
-                role: user.role,
-                email_id: user.email_data.email_id,
-                phone_number: user.phone_data.phone_number,
-                avatar:
-                  user.profile_pic.pic_type === "MEDIA"
-                    ? user.profile_pic.media
-                    : user.profile_pic.pic_type === "AVATAR"
-                      ? user.profile_pic.avatar
-                      : "",
-              };
+          //   if (saveLoggedInActivityReq.status === true) {
+          //     const user_to_save_in_media_master = {
+          //       user_id: user.id,
+          //       first_name: user.first_name,
+          //       last_name: user.last_name,
+          //       user_type: "OWNER",
+          //       content_owner: "",
+          //       role: user.role,
+          //       email_id: user.email_data.email_id,
+          //       phone_number: user.phone_data.phone_number,
+          //       avatar:
+          //         user.profile_pic.pic_type === "MEDIA"
+          //           ? user.profile_pic.media
+          //           : user.profile_pic.pic_type === "AVATAR"
+          //             ? user.profile_pic.avatar
+          //             : "",
+          //     };
 
-              let saveUserInMediaMasterReq =
-                await saveNewUserDetailsInMediaMaster(
-                  user_to_save_in_media_master,
-                  response_data.access_token
-                );
+          //     let saveUserInMediaMasterReq =
+          //       await saveNewUserDetailsInMediaMaster(
+          //         user_to_save_in_media_master,
+          //         response_data.access_token
+          //       );
 
-              if (saveUserInMediaMasterReq.status === true) {
-                let recent_login_attempts = [...user.recent_login_attempts];
+          //     if (saveUserInMediaMasterReq.status === true) {
+          //       let recent_login_attempts = [...user.recent_login_attempts];
 
-                recent_login_attempts.push({
-                  attempted_on: new Date(),
-                  attempt_result: "SUCCESS",
-                  attempt_stage: "VALIDATE_2FA",
-                  remarks: "User successfully logged in by validating 2fa.",
-                  metadata: {
-                    ip_address: ip_address,
-                    country_code: country_code,
-                    country_name: country_name,
-                    state: state,
-                    city: city,
-                    pincode: pincode,
-                    latitude: latitude,
-                    longitude: longitude,
-                  },
-                });
+          //       recent_login_attempts.push({
+          //         attempted_on: new Date(),
+          //         attempt_result: "SUCCESS",
+          //         attempt_stage: "VALIDATE_2FA",
+          //         remarks: "User successfully logged in by validating 2fa.",
+          //         metadata: {
+          //           ip_address: ip_address,
+          //           country_code: country_code,
+          //           country_name: country_name,
+          //           state: state,
+          //           city: city,
+          //           pincode: pincode,
+          //           latitude: latitude,
+          //           longitude: longitude,
+          //         },
+          //       });
 
-                user.recent_login_attempts = recent_login_attempts;
+          //       user.recent_login_attempts = recent_login_attempts;
 
-                try {
-                  const savedUser = await user.save();
-                  if (savedUser) {
-                    return res.status(STATUS.SUCCESS).json({
-                      message: "Login Successfull",
-                      data: response_data,
-                    });
-                  } else {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: MESSAGE.internalServerError,
-                    });
-                  }
-                } catch (error) {
-                  return res.status(STATUS.BAD_REQUEST).json({
-                    message: MESSAGE.internalServerError,
-                    error,
-                  });
-                }
-              } else {
-                let recent_login_attempts = [...user.recent_login_attempts];
+          //       try {
+          //         const savedUser = await user.save();
+          //         if (savedUser) {
+          //           return res.status(STATUS.SUCCESS).json({
+          //             message: "Login Successfull",
+          //             data: response_data,
+          //           });
+          //         } else {
+          //           return res.status(STATUS.BAD_REQUEST).json({
+          //             message: MESSAGE.internalServerError,
+          //           });
+          //         }
+          //       } catch (error) {
+          //         return res.status(STATUS.BAD_REQUEST).json({
+          //           message: MESSAGE.internalServerError,
+          //           error,
+          //         });
+          //       }
+          //     } else {
+          //       let recent_login_attempts = [...user.recent_login_attempts];
 
-                recent_login_attempts.push({
-                  attempted_on: new Date(),
-                  attempt_result: "FAILED",
-                  attempt_stage: "VALIDATE_2FA",
-                  remarks:
-                    "2fa validation successfull. Failed to save user in media master.",
-                  metadata: {
-                    ip_address: ip_address,
-                    country_code: country_code,
-                    country_name: country_name,
-                    state: state,
-                    city: city,
-                    pincode: pincode,
-                    latitude: latitude,
-                    longitude: longitude,
-                  },
-                });
+          //       recent_login_attempts.push({
+          //         attempted_on: new Date(),
+          //         attempt_result: "FAILED",
+          //         attempt_stage: "VALIDATE_2FA",
+          //         remarks:
+          //           "2fa validation successfull. Failed to save user in media master.",
+          //         metadata: {
+          //           ip_address: ip_address,
+          //           country_code: country_code,
+          //           country_name: country_name,
+          //           state: state,
+          //           city: city,
+          //           pincode: pincode,
+          //           latitude: latitude,
+          //           longitude: longitude,
+          //         },
+          //       });
 
-                user.recent_login_attempts = recent_login_attempts;
+          //       user.recent_login_attempts = recent_login_attempts;
 
-                try {
-                  const savedUser = await user.save();
-                  if (savedUser) {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: "Unable to save user in activity",
-                    });
-                  } else {
-                    return res.status(STATUS.BAD_REQUEST).json({
-                      message: MESSAGE.internalServerError,
-                    });
-                  }
-                } catch (error) {
-                  return res.status(STATUS.BAD_REQUEST).json({
-                    message: MESSAGE.internalServerError,
-                    error,
-                  });
-                }
-              }
-            } else {
-              let recent_login_attempts = [...user.recent_login_attempts];
+          //       try {
+          //         const savedUser = await user.save();
+          //         if (savedUser) {
+          //           return res.status(STATUS.BAD_REQUEST).json({
+          //             message: "Unable to save user in activity",
+          //           });
+          //         } else {
+          //           return res.status(STATUS.BAD_REQUEST).json({
+          //             message: MESSAGE.internalServerError,
+          //           });
+          //         }
+          //       } catch (error) {
+          //         return res.status(STATUS.BAD_REQUEST).json({
+          //           message: MESSAGE.internalServerError,
+          //           error,
+          //         });
+          //       }
+          //     }
+          //   } else {
+          //     let recent_login_attempts = [...user.recent_login_attempts];
 
-              recent_login_attempts.push({
-                attempted_on: new Date(),
-                attempt_result: "FAILED",
-                attempt_stage: "VALIDATE_2FA",
-                remarks:
-                  "2fa validation successfull. Failed to save activity in user activity.",
-                metadata: {
-                  ip_address: ip_address,
-                  country_code: country_code,
-                  country_name: country_name,
-                  state: state,
-                  city: city,
-                  pincode: pincode,
-                  latitude: latitude,
-                  longitude: longitude,
-                },
+          //     recent_login_attempts.push({
+          //       attempted_on: new Date(),
+          //       attempt_result: "FAILED",
+          //       attempt_stage: "VALIDATE_2FA",
+          //       remarks:
+          //         "2fa validation successfull. Failed to save activity in user activity.",
+          //       metadata: {
+          //         ip_address: ip_address,
+          //         country_code: country_code,
+          //         country_name: country_name,
+          //         state: state,
+          //         city: city,
+          //         pincode: pincode,
+          //         latitude: latitude,
+          //         longitude: longitude,
+          //       },
+          //     });
+
+          //     user.recent_login_attempts = recent_login_attempts;
+
+          //     try {
+          //       const savedUser = await user.save();
+          //       if (savedUser) {
+          //         return res.status(STATUS.BAD_REQUEST).json({
+          //           message: "Unable to save activity",
+          //         });
+          //       } else {
+          //         return res.status(STATUS.BAD_REQUEST).json({
+          //           message: MESSAGE.internalServerError,
+          //         });
+          //       }
+          //     } catch (error) {
+          //       return res.status(STATUS.BAD_REQUEST).json({
+          //         message: MESSAGE.internalServerError,
+          //         error,
+          //       });
+          //     }
+          //   }
+          // }
+
+          // else {
+          //   let recent_login_attempts = [...user.recent_login_attempts];
+
+          //   recent_login_attempts.push({
+          //     attempted_on: new Date(),
+          //     attempt_result: "FAILED",
+          //     attempt_stage: "VALIDATE_2FA",
+          //     remarks:
+          //       "2fa validation successfull. Failed to save user in user activity.",
+          //     metadata: {
+          //       ip_address: ip_address,
+          //       country_code: country_code,
+          //       country_name: country_name,
+          //       state: state,
+          //       city: city,
+          //       pincode: pincode,
+          //       latitude: latitude,
+          //       longitude: longitude,
+          //     },
+          //   });
+
+          //   user.recent_login_attempts = recent_login_attempts;
+
+          //   try {
+          //     const savedUser = await user.save();
+          //     if (savedUser) {
+          //       return res.status(STATUS.BAD_REQUEST).json({
+          //         message: "Unable to save user in activity",
+          //       });
+          //     } else {
+          //       return res.status(STATUS.BAD_REQUEST).json({
+          //         message: MESSAGE.internalServerError,
+          //       });
+          //     }
+          //   } catch (error) {
+          //     return res.status(STATUS.BAD_REQUEST).json({
+          //       message: MESSAGE.internalServerError,
+          //       error,
+          //     });
+          //   }
+          // }
+
+          try {
+            const savedUser = await user.save();
+            if (savedUser) {
+              return res.status(STATUS.SUCCESS).json({
+                message: "Login Successfull",
+                data: response_data,
               });
-
-              user.recent_login_attempts = recent_login_attempts;
-
-              try {
-                const savedUser = await user.save();
-                if (savedUser) {
-                  return res.status(STATUS.BAD_REQUEST).json({
-                    message: "Unable to save activity",
-                  });
-                } else {
-                  return res.status(STATUS.BAD_REQUEST).json({
-                    message: MESSAGE.internalServerError,
-                  });
-                }
-              } catch (error) {
-                return res.status(STATUS.BAD_REQUEST).json({
-                  message: MESSAGE.internalServerError,
-                  error,
-                });
-              }
-            }
-          } else {
-            let recent_login_attempts = [...user.recent_login_attempts];
-
-            recent_login_attempts.push({
-              attempted_on: new Date(),
-              attempt_result: "FAILED",
-              attempt_stage: "VALIDATE_2FA",
-              remarks:
-                "2fa validation successfull. Failed to save user in user activity.",
-              metadata: {
-                ip_address: ip_address,
-                country_code: country_code,
-                country_name: country_name,
-                state: state,
-                city: city,
-                pincode: pincode,
-                latitude: latitude,
-                longitude: longitude,
-              },
-            });
-
-            user.recent_login_attempts = recent_login_attempts;
-
-            try {
-              const savedUser = await user.save();
-              if (savedUser) {
-                return res.status(STATUS.BAD_REQUEST).json({
-                  message: "Unable to save user in activity",
-                });
-              } else {
-                return res.status(STATUS.BAD_REQUEST).json({
-                  message: MESSAGE.internalServerError,
-                });
-              }
-            } catch (error) {
+            } else {
               return res.status(STATUS.BAD_REQUEST).json({
                 message: MESSAGE.internalServerError,
-                error,
               });
             }
+          } catch (error) {
+            return res.status(STATUS.BAD_REQUEST).json({
+              message: MESSAGE.internalServerError,
+              error,
+            });
           }
         }
       } else {

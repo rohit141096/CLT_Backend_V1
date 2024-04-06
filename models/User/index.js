@@ -2,39 +2,39 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-const authorizedWebsiteSchema = new Schema(
-  {
-    website: {
-      type: ObjectId,
-      ref: "website",
-      required: false,
-    },
-    created_by: {
-      type: ObjectId,
-      ref: "user",
-      required: false,
-    },
-    is_active: {
-      type: Boolean,
-      default: true,
-    },
-    is_archived: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+// const authorizedWebsiteSchema = new Schema(
+//   {
+//     website: {
+//       type: ObjectId,
+//       ref: "website",
+//       required: false,
+//     },
+//     created_by: {
+//       type: ObjectId,
+//       ref: "user",
+//       required: false,
+//     },
+//     is_active: {
+//       type: Boolean,
+//       default: true,
+//     },
+//     is_archived: {
+//       type: Boolean,
+//       default: false,
+//     },
+//   },
+//   {
+//     timestamps: true,
+//   }
+// );
 
-authorizedWebsiteSchema.set("toJSON", {
-  transform: (doc, ret, options) => {
-    ret.id = ret._id;
-    delete ret._id;
-    delete ret.__v;
-  },
-});
+// authorizedWebsiteSchema.set("toJSON", {
+//   transform: (doc, ret, options) => {
+//     ret.id = ret._id;
+//     delete ret._id;
+//     delete ret.__v;
+//   },
+// });
 
 const loginAttemptSchema = new Schema(
   {
@@ -202,7 +202,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["SUPER_ADMIN", "ADMIN", "CREATOR", "MODERATOR", "APPROVER"],
+      enum: ["SUPER_ADMIN", "ADMIN"],
       default: "ADMIN",
     },
     created_by: {
@@ -210,7 +210,6 @@ const userSchema = new Schema(
       ref: "user",
       required: false,
     },
-    authorized_websites: [authorizedWebsiteSchema],
     recent_login_attempts: [loginAttemptSchema],
     is_active: {
       type: Boolean,

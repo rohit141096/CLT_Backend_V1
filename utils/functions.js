@@ -1,8 +1,8 @@
 const axios = require("axios");
 const crypto = require("crypto");
 
-const API_ROOT = process.env.CMS_OWNER_API_ROOT;
-const JWT_SECRET = process.env.CMS_OWNER_JWT_SECRET;
+const API_ROOT = process.env.CLT_API_ROOT;
+const JWT_SECRET = process.env.CLT_JWT_SECRET;
 const MEDIA_MASTER_API_URL = process.env.MEDIA_MASTER_API_URL;
 const UA_MASTER_API_URL = process.env.UA_MASTER_API_URL;
 const CMS_OWNER_SENDGRID_API_KEY = process.env.CMS_OWNER_SENDGRID_API_KEY;
