@@ -104,126 +104,130 @@ loginAttemptSchema.set("toJSON", {
   },
 });
 
-const userSchema = new Schema(
-  {
-    first_name: {
-      type: String,
-      required: true,
-      maxLength: 20,
-    },
-    last_name: {
-      type: String,
-      required: true,
-    },
-    email_data: {
-      email_id: {
-        type: String,
-        required: true,
-      },
-      is_validated: {
-        type: Boolean,
-        default: false,
-      },
-      otp: {
-        type: Number,
-        default: 0,
-      },
-      timestamp: {
-        type: Date,
-        required: false,
-      },
-    },
-    phone_data: {
-      phone_number: {
-        type: String,
-        required: true,
-      },
-      is_validated: {
-        type: Boolean,
-        default: false,
-      },
-      otp: {
-        type: Number,
-        default: 0,
-      },
-      timestamp: {
-        type: Date,
-        required: false,
-      },
-    },
-    two_factor_auth_data: {
-      secret: {
-        ascii: {
-          type: String,
-          required: true,
-        },
-        hex: {
-          type: String,
-          required: true,
-        },
-        base32: {
-          type: String,
-          required: true,
-        },
-        otpauth_url: {
-          type: String,
-          required: true,
-        },
-      },
-      is_validated: {
-        type: Boolean,
-        default: false,
-      },
-      timestamp: {
-        type: Date,
-        required: false,
-      },
-    },
-    password: {
+const userSchema = new Schema({
+  first_name: {
+    type: String,
+    required: true,
+    maxLength: 20,
+  },
+  last_name: {
+    type: String,
+    required: true,
+  },
+  email_data: {
+    email_id: {
       type: String,
       required: true,
     },
-    profile_pic: {
-      pic_type: {
-        type: String,
-        enum: ["AVATAR", "MEDIA"],
-        default: "AVATAR",
-      },
-      avatar: {
-        type: ObjectId,
-        ref: "avatar",
-        required: false,
-      },
-      media: {
-        type: ObjectId,
-        ref: "file",
-        required: false,
-      },
-    },
-    role: {
-      type: String,
-      enum: ["SUPER_ADMIN", "ADMIN"],
-      default: "ADMIN",
-    },
-    created_by: {
-      type: ObjectId,
-      ref: "user",
-      required: false,
-    },
-    recent_login_attempts: [loginAttemptSchema],
-    is_active: {
-      type: Boolean,
-      default: true,
-    },
-    is_archived: {
+    is_validated: {
       type: Boolean,
       default: false,
     },
+    otp: {
+      type: Number,
+      default: 0,
+    },
+    timestamp: {
+      type: Date,
+      required: false,
+    },
   },
-  {
-    timestamps: true,
-  }
-);
+  phone_data: {
+    phone_number: {
+      type: String,
+      required: true,
+    },
+    is_validated: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: Number,
+      default: 0,
+    },
+    timestamp: {
+      type: Date,
+      required: false,
+    },
+  },
+  two_factor_auth_data: {
+    secret: {
+      ascii: {
+        type: String,
+        required: true,
+      },
+      hex: {
+        type: String,
+        required: true,
+      },
+      base32: {
+        type: String,
+        required: true,
+      },
+      otpauth_url: {
+        type: String,
+        required: true,
+      },
+    },
+    is_validated: {
+      type: Boolean,
+      default: false,
+    },
+    timestamp: {
+      type: Date,
+      required: false,
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  profile_pic: {
+    pic_type: {
+      type: String,
+      enum: ["AVATAR", "MEDIA"],
+      default: "AVATAR",
+    },
+    avatar: {
+      type: ObjectId,
+      ref: "avatar",
+      required: false,
+    },
+    media: {
+      type: ObjectId,
+      ref: "file",
+      required: false,
+    },
+  },
+  role: {
+    type: String,
+    enum: [
+      "SUPER_ADMIN",
+      "CONTENT_ADMIN",
+      "CONTENT_CREATOR",
+      "CONTENT_MODERATOR",
+      "CONTENT_APPROVER",
+      "TEST_ADMIN",
+      "APPLICANT_VERIFIER",
+      "CERTIFICATE_AUTHORIZER",
+    ],
+    default: "CONTENT_ADMIN",
+  },
+  created_by: {
+    type: ObjectId,
+    ref: "user",
+    required: false,
+  },
+  recent_login_attempts: [loginAttemptSchema],
+  is_active: {
+    type: Boolean,
+    default: true,
+  },
+  is_archived: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 userSchema.set("toJSON", {
   transform: (doc, ret, options) => {
