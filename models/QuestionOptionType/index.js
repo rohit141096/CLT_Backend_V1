@@ -34,6 +34,6 @@ questionOptionTypeSchema.set("toJSON", {
   },
 });
 mongoose.exports = mongoose.model(
-  "question_Option_Type",
+  "question_option_type",
   questionOptionTypeSchema
 );

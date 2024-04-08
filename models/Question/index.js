@@ -1,8 +1,23 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
-const questionCategorySchema = new Schema({
-  name: {
+const questionchema = new Schema({
+  question_type: {
+    type: ObjectId,
+    ref: "question_type",
+    required: true,
+  },
+  question_category: {
+    type: ObjectId,
+    ref: "question_category",
+    required: true,
+  },
+  chapter: {
+    type: ObjectId,
+    ref: "chapter",
+    required: true,
+  },
+  title: {
     en: {
       type: String,
       required: true,
@@ -10,6 +25,16 @@ const questionCategorySchema = new Schema({
     kn: {
       type: String,
       required: true,
+    },
+  },
+  url: {
+    en: {
+      type: String,
+      required: false,
+    },
+    kn: {
+      type: String,
+      required: false,
     },
   },
   created_by: {
@@ -26,11 +51,11 @@ const questionCategorySchema = new Schema({
     default: false,
   },
 });
-questionCategorySchema.set("toJSON", {
+questionchema.set("toJSON", {
   transform: (doc, ret, options) => {
     ret.id = ret._id;
     delete ret._id;
     delete ret.__v;
   },
 });
-mongoose.exports = mongoose.model("question_category", questionCategorySchema);
+mongoose.exports = mongoose.model("question", questionchema);
